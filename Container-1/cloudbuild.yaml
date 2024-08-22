@@ -1,0 +1,41 @@
+steps:
+  # Build the container image
+  - name: "gcr.io/cloud-builders/docker"
+    id: "Build Image"
+    args:
+      [
+        "build",
+        "-t",
+        "us-east1-docker.pkg.dev/kubernetes-428901/kubernetes-assignment/container-1:$COMMIT_SHA",
+        ".",
+      ]
+  # Push the container image to Artifact Registry
+  - name: "gcr.io/cloud-builders/docker"
+    id: "Push Image"
+    args:
+      [
+        "push",
+        "us-east1-docker.pkg.dev/kubernetes-428901/kubernetes-assignment/container-1:$COMMIT_SHA",
+      ]
+  # Apply the pvc workload files
+  - name: "gcr.io/cloud-builders/kubectl"
+    id: "Apply PV and PVC"
+    args: ["apply", "-f", "pvc.yaml"]
+    env:
+      - "CLOUDSDK_COMPUTE_ZONE=us-central1-c"
+      - "CLOUDSDK_CONTAINER_CLUSTER=kubernetes-assignment-cluster"
+  # Deploy workload file to GKE
+  - name: "gcr.io/cloud-builders/gke-deploy"
+    id: "Apply Workload"
+    args:
+      [
+        "run",
+        "--filename=container-1-workload.yaml",
+        "--location=us-central1-c",
+        "--image=us-east1-docker.pkg.dev/kubernetes-428901/kubernetes-assignment/container-1:$COMMIT_SHA",
+        "--cluster=kubernetes-assignment-cluster",
+      ]
+images:
+  - "us-east1-docker.pkg.dev/kubernetes-428901/kubernetes-assignment/container-1:$COMMIT_SHA"
+options:
+  logging: CLOUD_LOGGING_ONLY

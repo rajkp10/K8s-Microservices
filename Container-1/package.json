@@ -1,0 +1,16 @@
+{
+  "name": "csci-5409-k8s-container-1",
+  "version": "1.0.0",
+  "description": "cloud computing kubernetes assignment container 1",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Raj Kamlesh Patel",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.20.2",
+    "express": "^4.19.2"
+  },
+  "type": "module"
+}
